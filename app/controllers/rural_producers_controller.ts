@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import RuralProducer from "#models/rural_producer"
+import CropsPlanted from "#models/crops_planted";
 
 export default class RuralProducersController {
   async index({}: HttpContext) {
@@ -11,7 +12,7 @@ export default class RuralProducersController {
   }
 
   async store({ request }: HttpContext) {
-    return await RuralProducer.create({
+    const ruralProducer = await RuralProducer.create({
       document: request.input('document'),
       producer_name: request.input('producer_name'),
       farm_name: request.input('farm_name'),
@@ -21,6 +22,19 @@ export default class RuralProducersController {
       arable_area: request.input('arable_area'),
       vegetation_area: request.input('vegetation_area'),
     })
+
+    const cropsPlanted = request.input('crops_planted') as number[]
+
+    if (cropsPlanted.length)  {
+      for (const cropTypeId of cropsPlanted) {
+        await CropsPlanted.create({
+          rural_producer_id: ruralProducer.id,
+          crop_type_id: cropTypeId,
+        })
+      }
+    }
+
+    return ruralProducer
   }
 
   async update({ request, params }: HttpContext) {
