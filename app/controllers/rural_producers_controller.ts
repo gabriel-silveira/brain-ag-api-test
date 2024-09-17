@@ -33,4 +33,10 @@ export default class RuralProducersController {
 
     return await ruralProducer.save()
   }
+
+  async destroy({ params }: HttpContext) {
+    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
+
+    return ruralProducer.delete()
+  }
 }
