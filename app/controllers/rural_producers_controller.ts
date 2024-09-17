@@ -7,7 +7,7 @@ export default class RuralProducersController {
   }
 
   async store({ request }: HttpContext) {
-    const ruralProducer: RuralProducer = await RuralProducer.create({
+    return await RuralProducer.create({
       document: request.input('document'),
       producer_name: request.input('producer_name'),
       farm_name: request.input('farm_name'),
@@ -17,7 +17,20 @@ export default class RuralProducersController {
       arable_area: request.input('arable_area'),
       vegetation_area: request.input('vegetation_area'),
     })
+  }
 
-    return ruralProducer.id
+  async update({ request, params }: HttpContext) {
+    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
+
+    ruralProducer.document = request.input('document')
+    ruralProducer.producer_name = request.input('producer_name')
+    ruralProducer.farm_name = request.input('farm_name')
+    ruralProducer.city = request.input('city')
+    ruralProducer.state = request.input('state')
+    ruralProducer.total_area = request.input('total_area')
+    ruralProducer.arable_area = request.input('arable_area')
+    ruralProducer.vegetation_area = request.input('vegetation_area')
+
+    return await ruralProducer.save()
   }
 }

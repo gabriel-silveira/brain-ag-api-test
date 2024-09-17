@@ -3,3 +3,4 @@ const RuralProducersController =  () => import('#controllers/rural_producers_con
 
 router.get('/rural-producers', [RuralProducersController, 'index'])
 router.post('/rural-producers', [RuralProducersController, 'store'])
+router.put('/rural-producers/:id', [RuralProducersController, 'update'])
