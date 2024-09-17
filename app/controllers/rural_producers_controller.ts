@@ -6,6 +6,10 @@ export default class RuralProducersController {
     return await RuralProducer.all()
   }
 
+  async show({ params }: HttpContext) {
+    return await RuralProducer.firstOrFail(params.id)
+  }
+
   async store({ request }: HttpContext) {
     return await RuralProducer.create({
       document: request.input('document'),
