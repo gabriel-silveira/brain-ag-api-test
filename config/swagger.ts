@@ -13,7 +13,7 @@ export default {
   info: {
     title: "Brain Agriculture API",
     version: "1.0.0",
-    description: "",
+    description: "Esta é a API criada para o teste da Brain Agriculture. <b>Node.js 22.11.1, Adonis.js V6, Postgres 16.4, Adonis AutoSwagger e Teste Unitários com Japa</b>",
   },
   snakeCase: true,
 
