@@ -2,8 +2,13 @@ import type { HttpContext } from "@adonisjs/core/http"
 import RuralProducer from "#models/rural_producer"
 import CropsPlantedService from "#services/crops_planted_service"
 import {validDocument} from "#validators/validators";
+import CropsPlanted from "#models/crops_planted";
 
 export default class RuralProducersController {
+  /**
+   * @index
+   * @description Lists all rural producers
+   */
   async index({}: HttpContext) {
     const ruralProducersUpdated = []
     const ruralProducers = await RuralProducer.all()
@@ -18,8 +23,12 @@ export default class RuralProducersController {
     return ruralProducersUpdated
   }
 
+  /**
+   * @show
+   * @description Shows a specific rural producer
+   */
   async show({ params }: HttpContext) {
-    const ruralProducer = await RuralProducer.findOrFail(params.id)
+    const ruralProducer = await RuralProducer.findOrFail(params.ruralProducerId)
 
     const cropsPlanted = await new CropsPlantedService(ruralProducer.id).getCropsPlanted()
 
@@ -29,19 +38,24 @@ export default class RuralProducersController {
     }
   }
 
+  /**
+   * @store
+   * @description Creates a rural producer
+   * @requestBody <RuralProducer>
+   */
   async store({ request, response }: HttpContext) {
     const document = request.input('document')
 
-    if (!validDocument(document)) {
-      return response.status(400).send({ erro: 'Documento inválido' })
-    }
+    if (!validDocument(document)) return response.status(400).send({ erro: 'Documento inválido' })
 
     const total_area = request.input('total_area')
     const arable_area = request.input('arable_area')
     const vegetation_area = request.input('vegetation_area')
 
     if ((arable_area + vegetation_area) > total_area) {
-      return response.status(400).send({ erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda' })
+      return response.status(400).send({
+        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda'
+      })
     }
 
     const ruralProducer = await RuralProducer.create({
@@ -50,9 +64,9 @@ export default class RuralProducersController {
       farm_name: request.input('farm_name'),
       city: request.input('city'),
       state: request.input('state'),
-      total_area: request.input('total_area'),
-      arable_area: request.input('arable_area'),
-      vegetation_area: request.input('vegetation_area'),
+      total_area,
+      arable_area,
+      vegetation_area,
     })
 
     const cropsPlanted = request.input('crops_planted') as number[]
@@ -65,8 +79,13 @@ export default class RuralProducersController {
     }
   }
 
-  async update({ request, params }: HttpContext) {
-    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
+  /**
+   * @update
+   * @description Updates a rural producer data
+   * @requestBody <RuralProducer>
+   */
+  async update({ request, response, params }: HttpContext) {
+    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.ruralProducerId)
 
     ruralProducer.document = request.input('document')
     ruralProducer.producer_name = request.input('producer_name')
@@ -76,6 +95,14 @@ export default class RuralProducersController {
     ruralProducer.total_area = request.input('total_area')
     ruralProducer.arable_area = request.input('arable_area')
     ruralProducer.vegetation_area = request.input('vegetation_area')
+
+    if (!validDocument(ruralProducer.document)) return response.status(400).send({ erro: 'Documento inválido' })
+
+    if ((ruralProducer.arable_area + ruralProducer.vegetation_area) > ruralProducer.total_area) {
+      return response.status(400).send({
+        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda'
+      })
+    }
 
     await ruralProducer.save()
 
@@ -89,8 +116,18 @@ export default class RuralProducersController {
     }
   }
 
+  /**
+   * @destroy
+   * @description Removes a rural producer data
+   */
   async destroy({ params }: HttpContext) {
-    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
+    const cropsPlanted = await CropsPlanted.query().where('rural_producer_id', '=', params.ruralProducerId)
+
+    if (cropsPlanted.length) {
+      for (const cropPlanted of cropsPlanted) await cropPlanted.delete()
+    }
+
+    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.ruralProducerId)
 
     return ruralProducer.delete()
   }

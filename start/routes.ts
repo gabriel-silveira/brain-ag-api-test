@@ -1,11 +1,31 @@
+import AutoSwagger from "adonis-autoswagger"
+import swagger from "#config/swagger"
+
 import router from '@adonisjs/core/services/router'
-const RuralProducersController =  () => import('#controllers/rural_producers_controller')
-const CropsPlantedController =  () => import('#controllers/crops_planted_controller')
 
-router.get('/rural-producers', [RuralProducersController, 'index'])
-router.post('/rural-producers', [RuralProducersController, 'store'])
-router.get('/rural-producers/:id', [RuralProducersController, 'show'])
-router.put('/rural-producers/:id', [RuralProducersController, 'update'])
-router.delete('/rural-producers/:id', [RuralProducersController, 'destroy'])
+const RuralProducersController = () => import('#controllers/rural_producers_controller')
+const CropsPlantedController = () => import('#controllers/crops_planted_controller')
 
-router.get('/crops-planted/:id', [CropsPlantedController, 'index'])
+router.group(() => {
+  router.get('/', [RuralProducersController, 'index'])
+  router.post('/', [RuralProducersController, 'store'])
+  router.get('/:ruralProducerId', [RuralProducersController, 'show'])
+  router.put('/:ruralProducerId', [RuralProducersController, 'update'])
+  router.delete('/:ruralProducerId', [RuralProducersController, 'destroy'])
+}).prefix('/rural-producers')
+
+router.group(() => {
+  router.get('/:ruralProducerId', [CropsPlantedController, 'index'])
+}).prefix('/crops-planted')
+
+// returns swagger in YAML
+router.get("/swagger", async () => {
+  return AutoSwagger.default.docs(router.toJSON(), swagger)
+})
+
+// Renders Swagger-UI and passes YAML-output of /swagger
+router.get("/docs", async () => {
+  return AutoSwagger.default.ui("/swagger", swagger)
+  // return AutoSwagger.default.scalar("/swagger"); to use Scalar instead
+  // return AutoSwagger.default.rapidoc("/swagger", "view"); to use RapiDoc instead (pass "view" default, or "read" to change the render-style)
+})
