@@ -3,6 +3,7 @@ import swagger from "#config/swagger"
 
 import router from '@adonisjs/core/services/router'
 
+const DashboardController = () => import("#controllers/dashboard_controller");
 const RuralProducersController = () => import('#controllers/rural_producers_controller')
 const CropsPlantedController = () => import('#controllers/crops_planted_controller')
 
@@ -17,6 +18,10 @@ router.group(() => {
 router.group(() => {
   router.get('/:ruralProducerId', [CropsPlantedController, 'index'])
 }).prefix('/crops-planted')
+
+router.group(() => {
+  router.get('/data', [DashboardController, 'data'])
+}).prefix('/dashboard')
 
 // returns swagger in YAML
 router.get("/swagger", async () => {
