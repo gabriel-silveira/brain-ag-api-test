@@ -1,6 +1,7 @@
 import type { HttpContext } from "@adonisjs/core/http"
 import RuralProducer from "#models/rural_producer"
-import CropsPlantedService from "#services/crops_planted_service";
+import CropsPlantedService from "#services/crops_planted_service"
+import {validDocument} from "#validators/validators";
 
 export default class RuralProducersController {
   async index({}: HttpContext) {
@@ -28,9 +29,23 @@ export default class RuralProducersController {
     }
   }
 
-  async store({ request }: HttpContext) {
+  async store({ request, response }: HttpContext) {
+    const document = request.input('document')
+
+    if (!validDocument(document)) {
+      return response.status(400).send({ erro: 'Documento inválido' })
+    }
+
+    const total_area = request.input('total_area')
+    const arable_area = request.input('arable_area')
+    const vegetation_area = request.input('vegetation_area')
+
+    if ((arable_area + vegetation_area) > total_area) {
+      return response.status(400).send({ erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda' })
+    }
+
     const ruralProducer = await RuralProducer.create({
-      document: request.input('document'),
+      document,
       producer_name: request.input('producer_name'),
       farm_name: request.input('farm_name'),
       city: request.input('city'),
@@ -42,9 +57,7 @@ export default class RuralProducersController {
 
     const cropsPlanted = request.input('crops_planted') as number[]
 
-    if (cropsPlanted.length)  {
-      await new CropsPlantedService(ruralProducer.id).updateCropsPlanted(cropsPlanted)
-    }
+    await new CropsPlantedService(ruralProducer.id).updateCropsPlanted(cropsPlanted || [])
 
     return {
       ...ruralProducer.$original,
@@ -68,9 +81,7 @@ export default class RuralProducersController {
 
     const cropsPlanted = request.input('crops_planted') as number[]
 
-    if (cropsPlanted.length)  {
-      await new CropsPlantedService(ruralProducer.id).updateCropsPlanted(cropsPlanted)
-    }
+    await new CropsPlantedService(ruralProducer.id).updateCropsPlanted(cropsPlanted || [])
 
     return {
       ...ruralProducer.$original,
