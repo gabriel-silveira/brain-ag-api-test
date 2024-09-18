@@ -1,7 +1,6 @@
-import type { HttpContext } from '@adonisjs/core/http'
+import type { HttpContext } from "@adonisjs/core/http"
 import RuralProducer from "#models/rural_producer"
-import CropsPlanted from "#models/crops_planted"
-import db from '@adonisjs/lucid/services/db'
+import CropsPlantedService from "#services/crops_planted_service";
 
 export default class RuralProducersController {
   async index({}: HttpContext) {
@@ -11,26 +10,17 @@ export default class RuralProducersController {
     for (const ruralProducer of ruralProducers) {
       ruralProducersUpdated.push({
         ...ruralProducer.$original,
-        crops_planted: [...await this.getCropsPlanted(ruralProducer.id)]
+        crops_planted: [...await new CropsPlantedService(ruralProducer.id).getCropsPlanted()]
       })
     }
 
     return ruralProducersUpdated
   }
 
-  async getCropsPlanted(ruralProducerId: number) {
-    return db.from('crops_planted')
-      .select('crop_types.id', 'crop_types.name')
-      .leftJoin('crop_types', (query) => {
-        query.on('crops_planted.crop_type_id', '=', 'crop_types.id')
-      })
-      .where('rural_producer_id', '=', ruralProducerId)
-  }
-
   async show({ params }: HttpContext) {
     const ruralProducer = await RuralProducer.findOrFail(params.id)
 
-    const cropsPlanted = await this.getCropsPlanted(ruralProducer.id)
+    const cropsPlanted = await new CropsPlantedService(ruralProducer.id).getCropsPlanted()
 
     return {
       ...ruralProducer.$original,
@@ -53,15 +43,13 @@ export default class RuralProducersController {
     const cropsPlanted = request.input('crops_planted') as number[]
 
     if (cropsPlanted.length)  {
-      for (const cropTypeId of cropsPlanted) {
-        await CropsPlanted.create({
-          rural_producer_id: ruralProducer.id,
-          crop_type_id: cropTypeId,
-        })
-      }
+      await new CropsPlantedService(ruralProducer.id).updateCropsPlanted(cropsPlanted)
     }
 
-    return ruralProducer
+    return {
+      ...ruralProducer.$original,
+      crops_planted: [...await new CropsPlantedService(ruralProducer.id).getCropsPlanted()]
+    }
   }
 
   async update({ request, params }: HttpContext) {
@@ -76,7 +64,18 @@ export default class RuralProducersController {
     ruralProducer.arable_area = request.input('arable_area')
     ruralProducer.vegetation_area = request.input('vegetation_area')
 
-    return await ruralProducer.save()
+    await ruralProducer.save()
+
+    const cropsPlanted = request.input('crops_planted') as number[]
+
+    if (cropsPlanted.length)  {
+      await new CropsPlantedService(ruralProducer.id).updateCropsPlanted(cropsPlanted)
+    }
+
+    return {
+      ...ruralProducer.$original,
+      crops_planted: [...await new CropsPlantedService(ruralProducer.id).getCropsPlanted()]
+    }
   }
 
   async destroy({ params }: HttpContext) {
