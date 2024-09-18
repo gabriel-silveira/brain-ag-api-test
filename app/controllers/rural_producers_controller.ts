@@ -1,4 +1,4 @@
-import type { HttpContext } from "@adonisjs/core/http"
+import type {HttpContext} from "@adonisjs/core/http"
 import RuralProducer from "#models/rural_producer"
 import CropsPlantedService from "#services/crops_planted_service"
 import {validDocument} from "#validators/validators";
@@ -27,8 +27,8 @@ export default class RuralProducersController {
    * @show
    * @description Shows a specific rural producer
    */
-  async show({ params }: HttpContext) {
-    const ruralProducer = await RuralProducer.findOrFail(params.ruralProducerId)
+  async show({params}: HttpContext) {
+    const ruralProducer = await RuralProducer.findOrFail(params.id)
 
     const cropsPlanted = await new CropsPlantedService(ruralProducer.id).getCropsPlanted()
 
@@ -41,12 +41,12 @@ export default class RuralProducersController {
   /**
    * @store
    * @description Creates a rural producer
-   * @requestBody <RuralProducer>
+   * @requestBody <CreateRuralProducerRequest>
    */
-  async store({ request, response }: HttpContext) {
+  async store({request, response}: HttpContext) {
     const document = request.input('document')
 
-    if (!validDocument(document)) return response.status(400).send({ erro: 'Documento inválido' })
+    if (!validDocument(document)) return response.status(400).send({erro: 'Documento inválido'})
 
     const total_area = request.input('total_area')
     const arable_area = request.input('arable_area')
@@ -82,10 +82,10 @@ export default class RuralProducersController {
   /**
    * @update
    * @description Updates a rural producer data
-   * @requestBody <RuralProducer>
+   * @requestBody <UpdateRuralProducerRequest>
    */
-  async update({ request, response, params }: HttpContext) {
-    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.ruralProducerId)
+  async update({request, response, params}: HttpContext) {
+    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
 
     ruralProducer.document = request.input('document')
     ruralProducer.producer_name = request.input('producer_name')
@@ -96,7 +96,7 @@ export default class RuralProducersController {
     ruralProducer.arable_area = request.input('arable_area')
     ruralProducer.vegetation_area = request.input('vegetation_area')
 
-    if (!validDocument(ruralProducer.document)) return response.status(400).send({ erro: 'Documento inválido' })
+    if (!validDocument(ruralProducer.document)) return response.status(400).send({erro: 'Documento inválido'})
 
     if ((ruralProducer.arable_area + ruralProducer.vegetation_area) > ruralProducer.total_area) {
       return response.status(400).send({
@@ -120,14 +120,14 @@ export default class RuralProducersController {
    * @destroy
    * @description Removes a rural producer data
    */
-  async destroy({ params }: HttpContext) {
-    const cropsPlanted = await CropsPlanted.query().where('rural_producer_id', '=', params.ruralProducerId)
+  async destroy({params}: HttpContext) {
+    const cropsPlanted = await CropsPlanted.query().where('rural_producer_id', '=', params.id)
 
     if (cropsPlanted.length) {
       for (const cropPlanted of cropsPlanted) await cropPlanted.delete()
     }
 
-    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.ruralProducerId)
+    const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
 
     return ruralProducer.delete()
   }

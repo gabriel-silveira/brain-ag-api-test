@@ -10,14 +10,11 @@ const CropsPlantedController = () => import('#controllers/crops_planted_controll
 router.group(() => {
   router.get('/', [RuralProducersController, 'index'])
   router.post('/', [RuralProducersController, 'store'])
-  router.get('/:ruralProducerId', [RuralProducersController, 'show'])
-  router.put('/:ruralProducerId', [RuralProducersController, 'update'])
-  router.delete('/:ruralProducerId', [RuralProducersController, 'destroy'])
+  router.get('/:id', [RuralProducersController, 'show'])
+  router.put('/:id', [RuralProducersController, 'update'])
+  router.delete('/:id', [RuralProducersController, 'destroy'])
+  router.get('/:id/crops-planted/', [CropsPlantedController, 'index'])
 }).prefix('/rural-producers')
-
-router.group(() => {
-  router.get('/:ruralProducerId', [CropsPlantedController, 'index'])
-}).prefix('/crops-planted')
 
 router.group(() => {
   router.get('/data', [DashboardController, 'data'])
