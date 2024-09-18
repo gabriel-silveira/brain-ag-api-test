@@ -1,8 +1,10 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import {DateTime} from 'luxon'
+import {BaseModel, column, hasMany} from '@adonisjs/lucid/orm'
+import type {HasMany} from "@adonisjs/lucid/types/relations";
+import CropType from "#models/crop_type";
 
 export default class RuralProducer extends BaseModel {
-  @column({ isPrimary: true })
+  @column({isPrimary: true})
   declare id: number
 
   @column()
@@ -29,9 +31,12 @@ export default class RuralProducer extends BaseModel {
   @column()
   declare vegetation_area: number
 
-  @column.dateTime({ autoCreate: true })
+  @hasMany(() => CropType)
+  declare crops_planted: HasMany<typeof CropType>
+
+  @column.dateTime({autoCreate: true})
   declare createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({autoCreate: true, autoUpdate: true})
   declare updatedAt: DateTime
 }

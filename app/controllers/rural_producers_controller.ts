@@ -1,14 +1,41 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import RuralProducer from "#models/rural_producer"
-import CropsPlanted from "#models/crops_planted";
+import CropsPlanted from "#models/crops_planted"
+import db from '@adonisjs/lucid/services/db'
 
 export default class RuralProducersController {
   async index({}: HttpContext) {
-    return await RuralProducer.all()
+    const ruralProducersUpdated = []
+    const ruralProducers = await RuralProducer.all()
+
+    for (const ruralProducer of ruralProducers) {
+      ruralProducersUpdated.push({
+        ...ruralProducer.$original,
+        crops_planted: [...await this.getCropsPlanted(ruralProducer.id)]
+      })
+    }
+
+    return ruralProducersUpdated
+  }
+
+  async getCropsPlanted(ruralProducerId: number) {
+    return db.from('crops_planted')
+      .select('crop_types.id', 'crop_types.name')
+      .leftJoin('crop_types', (query) => {
+        query.on('crops_planted.crop_type_id', '=', 'crop_types.id')
+      })
+      .where('rural_producer_id', '=', ruralProducerId)
   }
 
   async show({ params }: HttpContext) {
-    return await RuralProducer.firstOrFail(params.id)
+    const ruralProducer = await RuralProducer.findOrFail(params.id)
+
+    const cropsPlanted = await this.getCropsPlanted(ruralProducer.id)
+
+    return {
+      ...ruralProducer.$original,
+      crops_planted: [...cropsPlanted]
+    }
   }
 
   async store({ request }: HttpContext) {

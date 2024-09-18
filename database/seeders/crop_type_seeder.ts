@@ -1,5 +1,5 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import CropType from "#models/crop_type";
+import CropType from "#models/crop_type"
 
 export default class extends BaseSeeder {
   async run() {
