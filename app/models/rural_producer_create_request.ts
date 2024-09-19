@@ -1,5 +1,5 @@
-import {DateTime} from 'luxon'
-import {BaseModel, column} from '@adonisjs/lucid/orm'
+import { DateTime } from 'luxon'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class CreateRuralProducerRequest extends BaseModel {
   @column()
@@ -29,9 +29,9 @@ export default class CreateRuralProducerRequest extends BaseModel {
   @column()
   declare crops_planted: number[]
 
-  @column.dateTime({autoCreate: true})
+  @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
-  @column.dateTime({autoCreate: true, autoUpdate: true})
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 }

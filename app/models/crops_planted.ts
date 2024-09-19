@@ -1,4 +1,4 @@
-import {BaseModel, column} from "@adonisjs/lucid/orm";
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class CropsPlanted extends BaseModel {
   public static table = 'crops_planted'

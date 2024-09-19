@@ -1,8 +1,8 @@
-import RuralProducer from "#models/rural_producer";
-import CropsPlantedService from "#services/crops_planted_service";
+import RuralProducer from '#models/rural_producer'
+import CropsPlantedService from '#services/crops_planted_service'
 
 export default class DashboardService {
-  private ruralProducers: RuralProducer[] = [];
+  private ruralProducers: RuralProducer[] = []
 
   async data() {
     this.ruralProducers = await RuralProducer.all()
@@ -19,23 +19,23 @@ export default class DashboardService {
   }
 
   async byState() {
-    const totals: { [key: string]: number } = {};
-    const percentages: { [key: string]: number } = {};
-    let grandTotal = 0;
+    const totals: { [key: string]: number } = {}
+    const percentages: { [key: string]: number } = {}
+    let grandTotal = 0
 
     for (const ruralProducer of this.ruralProducers) {
-      if (!totals[ruralProducer.state]) totals[ruralProducer.state] = 0;
-      totals[ruralProducer.state] += 1;
+      if (!totals[ruralProducer.state]) totals[ruralProducer.state] = 0
+      totals[ruralProducer.state] += 1
     }
 
     for (const key of Object.keys(totals)) {
-      grandTotal += totals[key];
+      grandTotal += totals[key]
     }
 
     for (const key of Object.keys(totals)) {
-      const percentage = Number(((totals[key] / grandTotal) * 100).toFixed(0));
+      const percentage = Number(((totals[key] / grandTotal) * 100).toFixed(0))
 
-      percentages[key] = percentage || 0;
+      percentages[key] = percentage || 0
     }
 
     return {
@@ -48,27 +48,25 @@ export default class DashboardService {
   }
 
   async byCropPlanted() {
-    const totals: { [key: string]: number } = {};
-    const percentages: { [key: string]: number } = {};
-    let grandTotal = 0;
+    const totals: { [key: string]: number } = {}
+    const percentages: { [key: string]: number } = {}
+    let grandTotal = 0
 
     for (const ruralProducer of this.ruralProducers) {
       const cropsPlanted = await new CropsPlantedService(ruralProducer.id).getCropsPlanted()
 
       for (const crop_planted of cropsPlanted) {
-        if (!totals[crop_planted['name']])
-          totals[crop_planted['name']] = 1;
-        else
-          totals[crop_planted['name']] += 1;
+        if (!totals[crop_planted['name']]) totals[crop_planted['name']] = 1
+        else totals[crop_planted['name']] += 1
       }
     }
 
-    for (const key of Object.keys(totals)) grandTotal += totals[key];
+    for (const key of Object.keys(totals)) grandTotal += totals[key]
 
     for (const key of Object.keys(totals)) {
-      const percentage = Number(((totals[key] / grandTotal) * 100).toFixed(0));
+      const percentage = Number(((totals[key] / grandTotal) * 100).toFixed(0))
 
-      percentages[key] = percentage || 0;
+      percentages[key] = percentage || 0
     }
 
     return {
@@ -78,12 +76,12 @@ export default class DashboardService {
   }
 
   async byArea() {
-    let totalArable = 0;
-    let totalVegetation = 0;
+    let totalArable = 0
+    let totalVegetation = 0
 
     for (const ruralProducer of this.ruralProducers) {
-      totalArable += Number(ruralProducer.arable_area);
-      totalVegetation += Number(ruralProducer.vegetation_area);
+      totalArable += Number(ruralProducer.arable_area)
+      totalVegetation += Number(ruralProducer.vegetation_area)
     }
 
     return {

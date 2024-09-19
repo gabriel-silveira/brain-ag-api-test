@@ -1,7 +1,7 @@
-import {BaseModel, column} from "@adonisjs/lucid/orm";
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class CropType extends BaseModel {
-  @column({isPrimary: true})
+  @column({ isPrimary: true })
   declare id: number
 
   @column()

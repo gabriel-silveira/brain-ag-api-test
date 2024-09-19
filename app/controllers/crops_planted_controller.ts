@@ -1,5 +1,5 @@
-import type {HttpContext} from "@adonisjs/core/http";
-import CropsPlanted from "#models/crops_planted"
+import type { HttpContext } from '@adonisjs/core/http'
+import CropsPlanted from '#models/crops_planted'
 
 export default class CropsPlantedController {
   async index({ params }: HttpContext) {

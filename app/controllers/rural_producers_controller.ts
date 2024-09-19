@@ -1,8 +1,8 @@
-import type {HttpContext} from "@adonisjs/core/http"
-import RuralProducer from "#models/rural_producer"
-import CropsPlantedService from "#services/crops_planted_service"
-import {validDocument} from "#validators/validators";
-import CropsPlanted from "#models/crops_planted";
+import type { HttpContext } from '@adonisjs/core/http'
+import RuralProducer from '#models/rural_producer'
+import CropsPlantedService from '#services/crops_planted_service'
+import { validDocument } from '#validators/validators'
+import CropsPlanted from '#models/crops_planted'
 
 export default class RuralProducersController {
   /**
@@ -16,7 +16,7 @@ export default class RuralProducersController {
     for (const ruralProducer of ruralProducers) {
       ruralProducersUpdated.push({
         ...ruralProducer.$original,
-        crops_planted: [...await new CropsPlantedService(ruralProducer.id).getCropsPlanted()]
+        crops_planted: [...(await new CropsPlantedService(ruralProducer.id).getCropsPlanted())],
       })
     }
 
@@ -27,14 +27,14 @@ export default class RuralProducersController {
    * @show
    * @description Shows a specific rural producer
    */
-  async show({params}: HttpContext) {
+  async show({ params }: HttpContext) {
     const ruralProducer = await RuralProducer.findOrFail(params.id)
 
     const cropsPlanted = await new CropsPlantedService(ruralProducer.id).getCropsPlanted()
 
     return {
       ...ruralProducer.$original,
-      crops_planted: [...cropsPlanted]
+      crops_planted: [...cropsPlanted],
     }
   }
 
@@ -43,18 +43,18 @@ export default class RuralProducersController {
    * @description Creates a rural producer
    * @requestBody <CreateRuralProducerRequest>
    */
-  async store({request, response}: HttpContext) {
+  async store({ request, response }: HttpContext) {
     const document = request.input('document')
 
-    if (!validDocument(document)) return response.status(400).send({erro: 'Documento inválido'})
+    if (!validDocument(document)) return response.status(400).send({ erro: 'Documento inválido' })
 
     const total_area = request.input('total_area')
     const arable_area = request.input('arable_area')
     const vegetation_area = request.input('vegetation_area')
 
-    if ((arable_area + vegetation_area) > total_area) {
+    if (arable_area + vegetation_area > total_area) {
       return response.status(400).send({
-        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda'
+        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda',
       })
     }
 
@@ -75,7 +75,7 @@ export default class RuralProducersController {
 
     return {
       ...ruralProducer.$original,
-      crops_planted: [...await new CropsPlantedService(ruralProducer.id).getCropsPlanted()]
+      crops_planted: [...(await new CropsPlantedService(ruralProducer.id).getCropsPlanted())],
     }
   }
 
@@ -84,7 +84,7 @@ export default class RuralProducersController {
    * @description Updates a rural producer data
    * @requestBody <UpdateRuralProducerRequest>
    */
-  async update({request, response, params}: HttpContext) {
+  async update({ request, response, params }: HttpContext) {
     const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
 
     ruralProducer.document = request.input('document')
@@ -96,11 +96,12 @@ export default class RuralProducersController {
     ruralProducer.arable_area = request.input('arable_area')
     ruralProducer.vegetation_area = request.input('vegetation_area')
 
-    if (!validDocument(ruralProducer.document)) return response.status(400).send({erro: 'Documento inválido'})
+    if (!validDocument(ruralProducer.document))
+      return response.status(400).send({ erro: 'Documento inválido' })
 
-    if ((ruralProducer.arable_area + ruralProducer.vegetation_area) > ruralProducer.total_area) {
+    if (ruralProducer.arable_area + ruralProducer.vegetation_area > ruralProducer.total_area) {
       return response.status(400).send({
-        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda'
+        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda',
       })
     }
 
@@ -112,7 +113,7 @@ export default class RuralProducersController {
 
     return {
       ...ruralProducer.$original,
-      crops_planted: [...await new CropsPlantedService(ruralProducer.id).getCropsPlanted()]
+      crops_planted: [...(await new CropsPlantedService(ruralProducer.id).getCropsPlanted())],
     }
   }
 
@@ -120,7 +121,7 @@ export default class RuralProducersController {
    * @destroy
    * @description Removes a rural producer data
    */
-  async destroy({params}: HttpContext) {
+  async destroy({ params }: HttpContext) {
     const cropsPlanted = await CropsPlanted.query().where('rural_producer_id', '=', params.id)
 
     if (cropsPlanted.length) {
