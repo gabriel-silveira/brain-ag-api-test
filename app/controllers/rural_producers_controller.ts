@@ -9,7 +9,7 @@ export default class RuralProducersController {
    * @index
    * @description Lists all rural producers
    */
-  async index({}: HttpContext) {
+  public async index({}: HttpContext) {
     const ruralProducersUpdated = []
     const ruralProducers = await RuralProducer.all()
 
@@ -27,7 +27,7 @@ export default class RuralProducersController {
    * @show
    * @description Shows a specific rural producer
    */
-  async show({ params }: HttpContext) {
+  public async show({ params }: HttpContext) {
     const ruralProducer = await RuralProducer.findOrFail(params.id)
 
     const cropsPlanted = await new CropsPlantedService(ruralProducer.id).getCropsPlanted()
@@ -43,7 +43,7 @@ export default class RuralProducersController {
    * @description Creates a rural producer
    * @requestBody <CreateRuralProducerRequest>
    */
-  async store({ request, response }: HttpContext) {
+  public async store({ request, response }: HttpContext) {
     const document = request.input('document')
 
     if (!validDocument(document)) return response.status(400).send({ erro: 'Documento inválido' })
@@ -84,7 +84,7 @@ export default class RuralProducersController {
    * @description Updates a rural producer data
    * @requestBody <UpdateRuralProducerRequest>
    */
-  async update({ request, response, params }: HttpContext) {
+  public async update({ request, response, params }: HttpContext) {
     const ruralProducer: RuralProducer = await RuralProducer.findOrFail(params.id)
 
     ruralProducer.document = request.input('document')
@@ -121,7 +121,7 @@ export default class RuralProducersController {
    * @destroy
    * @description Removes a rural producer data
    */
-  async destroy({ params }: HttpContext) {
+  public async destroy({ params }: HttpContext) {
     const cropsPlanted = await CropsPlanted.query().where('rural_producer_id', '=', params.id)
 
     if (cropsPlanted.length) {

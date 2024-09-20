@@ -6,7 +6,7 @@ export default class DashboardController {
    * @data
    * @description Data to be shown on dashboard
    */
-  async data({}: HttpContext) {
+  public async data({}: HttpContext) {
     return await new DashboardService().data()
   }
 }
