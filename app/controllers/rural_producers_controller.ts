@@ -3,6 +3,7 @@ import RuralProducer from '#models/rural_producer'
 import CropsPlantedService from '#services/crops_planted_service'
 import { validDocument } from '#validators/validators'
 import CropsPlanted from '#models/crops_planted'
+import {createRuralProducerValidator} from "#validators/rural_producer";
 
 export default class RuralProducersController {
   /**
@@ -46,17 +47,33 @@ export default class RuralProducersController {
   public async store({ request, response }: HttpContext) {
     const document = request.input('document')
 
-    if (!validDocument(document)) return response.status(400).send({ erro: 'Documento inválido' })
+    if (document && !validDocument(document)) return response.status(400).send({
+      "errors": [
+        {
+          "message": "Invalid document format",
+          "rule": "invalid",
+          "field": "document"
+        },
+      ]
+    })
 
-    const total_area = request.input('total_area')
-    const arable_area = request.input('arable_area')
-    const vegetation_area = request.input('vegetation_area')
+    const total_area = Number(request.input('total_area'))
+    const arable_area = Number(request.input('arable_area'))
+    const vegetation_area = Number(request.input('vegetation_area'))
 
-    if (arable_area + vegetation_area > total_area) {
+    if ((arable_area + vegetation_area) > total_area) {
       return response.status(400).send({
-        erro: 'A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda',
+        "errors": [
+          {
+            "message": "A soma de área agrícultável e vegetação não deverá ser maior que a área total da fazenda",
+            "rule": "discrepancy",
+            "field": "arable_area, vegetation_area, total_area"
+          },
+        ]
       })
     }
+
+    await request.validateUsing(createRuralProducerValidator)
 
     const ruralProducer = await RuralProducer.create({
       document,
