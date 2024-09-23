@@ -1,0 +1,662 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Brain Agriculture API",
+    "version": "1.0.0",
+    "description": "Esta é a API criada para o teste da Brain Agriculture. <b>Node.js 22.11.1, Adonis.js V6, Postgres 16.4, Adonis AutoSwagger e Teste Unitários com Japa</b>"
+  },
+  "components": {
+    "responses": {
+      "Forbidden": {
+        "description": "Access token is missing or invalid"
+      },
+      "Accepted": {
+        "description": "The request was accepted"
+      },
+      "Created": {
+        "description": "The resource has been created"
+      },
+      "NotFound": {
+        "description": "The resource has been created"
+      },
+      "NotAcceptable": {
+        "description": "The resource has been created"
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Any": {
+        "description": "Any JSON object not defined as schema"
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "example": 100,
+            "nullable": false
+          },
+          "page": {
+            "type": "number",
+            "example": 2,
+            "nullable": false
+          },
+          "perPage": {
+            "type": "number",
+            "example": 10,
+            "nullable": false
+          },
+          "currentPage": {
+            "type": "number",
+            "example": 3,
+            "nullable": false
+          },
+          "lastPage": {
+            "type": "number",
+            "example": 10,
+            "nullable": false
+          },
+          "firstPage": {
+            "type": "number",
+            "example": 1,
+            "nullable": false
+          },
+          "lastPageUrl": {
+            "type": "string",
+            "example": "/?page=10",
+            "nullable": false
+          },
+          "firstPageUrl": {
+            "type": "string",
+            "example": "/?page=1",
+            "nullable": false
+          },
+          "nextPageUrl": {
+            "type": "string",
+            "example": "/?page=6",
+            "nullable": false
+          },
+          "previousPageUrl": {
+            "type": "string",
+            "example": "/?page=5",
+            "nullable": false
+          }
+        }
+      },
+      "CropsPlanted": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 817
+          },
+          "rural_producer_id": {
+            "type": "number",
+            "example": 943
+          },
+          "crop_type_id": {
+            "type": "number",
+            "example": 124
+          }
+        },
+        "description": "CropsPlanted (Model)"
+      },
+      "CropType": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 518
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          }
+        },
+        "description": "CropType (Model)"
+      },
+      "RuralProducer": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 231
+          },
+          "document": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "producer_name": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "farm_name": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "city": {
+            "type": "string",
+            "example": "Chicago"
+          },
+          "state": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "total_area": {
+            "type": "number",
+            "example": 460
+          },
+          "arable_area": {
+            "type": "number",
+            "example": 803
+          },
+          "vegetation_area": {
+            "type": "number",
+            "example": 228
+          },
+          "crops_planted": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CropType",
+              "example": null
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          }
+        },
+        "description": "RuralProducer (Model)"
+      },
+      "CreateRuralProducerRequest": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "document": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "producer_name": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "farm_name": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "city": {
+            "type": "string",
+            "example": "Chicago"
+          },
+          "state": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "total_area": {
+            "type": "number",
+            "example": 480
+          },
+          "arable_area": {
+            "type": "number",
+            "example": 153
+          },
+          "vegetation_area": {
+            "type": "number",
+            "example": 927
+          },
+          "crops_planted": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 949
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          }
+        },
+        "description": "CreateRuralProducerRequest (Model)"
+      },
+      "UpdateRuralProducerRequest": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 556
+          },
+          "document": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "producer_name": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "farm_name": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "city": {
+            "type": "string",
+            "example": "Chicago"
+          },
+          "state": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "total_area": {
+            "type": "number",
+            "example": 332
+          },
+          "arable_area": {
+            "type": "number",
+            "example": 563
+          },
+          "vegetation_area": {
+            "type": "number",
+            "example": 557
+          },
+          "crops_planted": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 758
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          }
+        },
+        "description": "UpdateRuralProducerRequest (Model)"
+      },
+      "User": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 816
+          },
+          "full_name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "johndoe@example.com",
+            "format": "email"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          }
+        },
+        "description": "User (Model)"
+      },
+      "createRuralProducerValidator": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 11
+          },
+          "producer_name": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 1
+          },
+          "farm_name": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 1
+          },
+          "city": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 2
+          },
+          "total_area": {
+            "type": "number",
+            "example": 1,
+            "minimum": 1,
+            "required": true
+          },
+          "arable_area": {
+            "type": "number",
+            "example": 1,
+            "minimum": 1,
+            "required": true
+          },
+          "vegetation_area": {
+            "type": "number",
+            "example": 1,
+            "minimum": 1,
+            "required": true
+          }
+        },
+        "example": {
+          "document": "Lorem Ipsum",
+          "producer_name": "Lorem Ipsum",
+          "farm_name": "Lorem Ipsum",
+          "city": "Lorem Ipsum",
+          "state": "Lorem Ipsum",
+          "total_area": 1,
+          "arable_area": 1,
+          "vegetation_area": 1
+        },
+        "description": "createRuralProducerValidator (Validator)"
+      },
+      "updateRuralProducerValidator": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 11
+          }
+        },
+        "example": {
+          "document": "Lorem Ipsum"
+        },
+        "description": "updateRuralProducerValidator (Validator)"
+      }
+    }
+  },
+  "paths": {
+    "/rural-producers": {
+      "get": {
+        "summary": "Get a list of  (index)",
+        "description": "Lists all rural producers\n\n _app/controllers/rural_producers_controller.ts_ - **index**",
+        "parameters": [],
+        "tags": [
+          ""
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": " (store)",
+        "description": "Creates a rural producer\n\n _app/controllers/rural_producers_controller.ts_ - **store**",
+        "parameters": [],
+        "tags": [
+          ""
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRuralProducerRequest"
+              },
+              "example": {
+                "document": "Lorem Ipsum",
+                "producer_name": "Lorem Ipsum",
+                "farm_name": "Lorem Ipsum",
+                "city": "Chicago",
+                "state": "Lorem Ipsum",
+                "total_area": 480,
+                "arable_area": 153,
+                "vegetation_area": 927,
+                "crops_planted": [
+                  949
+                ],
+                "created_at": "2021-03-23T16:13:08.489+01:00",
+                "updated_at": "2021-03-23T16:13:08.489+01:00"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rural-producers/{id}": {
+      "get": {
+        "summary": "Get a single instance of :id (show)",
+        "description": "Shows a specific rural producer\n\n _app/controllers/rural_producers_controller.ts_ - **show**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          ":ID"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Update :id (update)",
+        "description": "Updates a rural producer data\n\n _app/controllers/rural_producers_controller.ts_ - **update**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          ":ID"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRuralProducerRequest"
+              },
+              "example": {
+                "id": 556,
+                "document": "Lorem Ipsum",
+                "producer_name": "Lorem Ipsum",
+                "farm_name": "Lorem Ipsum",
+                "city": "Chicago",
+                "state": "Lorem Ipsum",
+                "total_area": 332,
+                "arable_area": 563,
+                "vegetation_area": 557,
+                "crops_planted": [
+                  758
+                ],
+                "created_at": "2021-03-23T16:13:08.489+01:00",
+                "updated_at": "2021-03-23T16:13:08.489+01:00"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete :id (destroy)",
+        "description": "Removes a rural producer data\n\n _app/controllers/rural_producers_controller.ts_ - **destroy**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          ":ID"
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/rural-producers/{id}/crops-planted": {
+      "get": {
+        "summary": "Get a list of :id (index)",
+        "description": "\n\n _app/controllers/crops_planted_controller.ts_ - **index**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          ":ID"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/dashboard/data": {
+      "get": {
+        "summary": " (data)",
+        "description": "Data to be shown on dashboard\n\n _app/controllers/dashboard_controller.ts_ - **data**",
+        "parameters": [],
+        "tags": [
+          "DATA"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "route",
+        "description": "\n\n __ - ****",
+        "parameters": [],
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": ":ID",
+      "description": "Everything related to :ID"
+    },
+    {
+      "name": "DATA",
+      "description": "Everything related to DATA"
+    }
+  ]
+}
